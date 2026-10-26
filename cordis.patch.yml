@@ -1,0 +1,11 @@
+# dsh-workspace-session-drag — DSH bundle patch
+#
+# 把插件挂进 profile 的配置树。name 必须与安装后的包名完全一致。
+#
+# 安装（DSH 完全退出后）：
+#   dsh plugin --profile desktop add link:<插件目录>
+#
+# 或在 profile 的 package.json 里手动加 dependencies + bundles（见 README）。
+- insert:
+    - id: dsh-workspace-session-drag
+      name: dsh-workspace-session-drag

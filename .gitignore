@@ -1,0 +1,14 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+
+# 运行时产物
+*.log
+*.bak
+backups/
