@@ -133,6 +133,12 @@ test/            冒烟测试（纯 Node，无额外依赖）
   registry 内部的 `headers` / `sessionPaths` 缓存，避免冷会话读到旧 header。
 - 已打开（live）会话的刷新不能走 `attachSession`（它用 live session 冻结的旧 header 校验 cwd），
   改为成对改写旧/新工作区记录，并先把 jsonl 写句柄的 `header.cwd` 切到新目录。
+- **内存里那条 live Session 的 header 也要跟着切**（`retargetLiveSessionHeaders`）：
+  `dsh-session-query` 的 `assertSessionHeadersCompatible()` 会拿 live Session 的 header 与
+  磁盘 artifact 的 header 逐字段比对，不一致就抛 `SESSION_QUERY_SOURCE_CONFLICT`；而
+  `dsh-api-session-controller` 的 `list()` 没有逐条兜错 —— 一条冲突就让 `/api/session/list`
+  整体失败，刷新后侧栏全空，直到重启 DSH。注意写句柄的 `header` 与 `Session.header` 是两个对象：
+  `Session.header` 是普通字段（不是 getter、实例未被冻结），换引用即可，改不了就整体回滚。
 - 客户端通过 `[data-row-key="workspace:<id>"]` / `[data-row-key="session:<id>"]` 识别拖拽源与目标分组；
   分组容器用 `[class*="groupSection"]` 匹配，兼容 CSS Module 的哈希前缀。
 - 未分组组的标题行 `data-row-key` 是 `workspace:`（空 id）；把它作为“移出工作区”的目标。
@@ -146,6 +152,7 @@ test/            冒烟测试（纯 Node，无额外依赖）
 ```bat
 node test/smoke-move-core.mjs
 node test/smoke-auto-scroll.mjs
+node test/smoke-live-header.mjs
 ```
 
 ## 许可证
